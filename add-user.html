@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<!-- HTML Display Elements -->
+<html>
+    <head>
+        <title>Add User</title>
+    </head>
+
+    <body>
+
+    <form method="POST" id="form">
+        <h1>File Uploader</h1>
+
+        <div>
+            <label for="img"><strong>Avatar:</strong></label>
+            <input type="file" id="img" name="img" accept="image/*">
+        </div>
+
+        <div>
+
+            <label for="name"><strong>Name</strong></label>
+            <input type="text" name="name" id="name">
+        </div>
+        <button onclick="checkData()" type="button">Submit</button>
+    </form>
+    <p><a href="index.html" style="color: black;">Back to Index</a></p>
+    <div id="status"></div>
+    </body>
+</html>
+
+<!-- Prevents the enter key from submitting the form -->
+<script>
+    document.getElementById("name").addEventListener('keypress', checkKey);
+
+    function checkKey(e)
+        {
+          var code = e.keyCode;
+
+          if(code == 13)
+          {
+            e.preventDefault();
+            checkData();
+          }
+        }
+</script>
+
+<script>
+    //Checks if the name is empty or not
+    function checkData()
+    {
+        var name = document.getElementById("name").value;
+        var fileInput = document.getElementById("img");
+        var img = fileInput.files[0];
+        console.log(img);
+        if(name.trim().length != 0)
+        {
+            var formData = new FormData();
+            formData.append("img", img);
+            formData.append("name", name);
+
+            document.getElementById("name").value = null;
+            document.getElementById("img").value = null;
+            
+            sendData(formData);
+        }
+        else
+        {
+            alert("Enter a display name");
+        }
+    }
+
+        function sendData(formData)
+        {
+            // Save user to database
+            var xmlho = new XMLHttpRequest();
+            xmlho.open("POST", "save-user-to-db.php");
+
+            xmlho.onreadystatechange = function()
+            {
+                if(xmlho.readyState == 4 && xmlho.status==200)
+                {
+                var return_data = xmlho.responseText;
+                document.getElementById("status").innerHTML = return_data;
+                }
+            } 
+            xmlho.send(formData);
+    }
+
+</script>
